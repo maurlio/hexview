@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "hex.h"
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 65536
 
 int main(int argc, char *argv[])
 {
