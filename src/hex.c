@@ -6,7 +6,6 @@ static const char HEX_CHAR[] = "0123456789abcdef";
 
 void hex_print_line(const uint8_t *buffer, size_t length, size_t offset)
 {
-    /* Buffer de linha fixo */
     char line[80];
     int p = 0;
 
@@ -28,6 +27,16 @@ void hex_print_line(const uint8_t *buffer, size_t length, size_t offset)
             line[p++] = ' ';
             line[p++] = ' ';
         }
+    }
+
+    line[p++] = ' ';
+    line[p++] = ' ';
+
+    /* Representação ASCII */
+    for (size_t i = 0; i < length; i++)
+    {
+        unsigned char c = buffer[i];
+        line[p++] = isprint(c) ? c : '.';
     }
 
     line[p++] = '\n';
