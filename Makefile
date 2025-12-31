@@ -1,26 +1,47 @@
-CC = gcc 
-CFLAGS = -std=c11 -O3 -Wall -Wextra -Wpedantic -D_POSIX_C_SOURCE=200809L
+# Compilador
+CC := gcc
 
-TARGET = hexview
-SRC_DIR = src
-BUILD_DIR = build
+# Diretórios
+SRC_DIR := src
+BUILD_DIR := build
+INCLUDE_DIR := include
 
-# Mapeia src/main.c para build/main.o
-SRCS = $(SRC_DIR)/main.c
-OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+# Arquivo final
+TARGET := hexview
 
+# Flags
+CFLAGS := -std=c11 -O3 -Wall -Wextra -Wpedantic -I$(INCLUDE_DIR)
+LDFLAGS :=
+
+# Fontes e objetos
+SRCS := $(wildcard $(SRC_DIR)/*.c)
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+DEPS := $(OBJS:.o=.d)
+
+# Alvo padrão
 all: $(TARGET)
 
-# Cria o executável na raiz
+# Linkagem
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
-# Cria .o em build/ e garante que a pasta exista
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+# Compilação com geração de dependências
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+
+# Cria diretório build se não existir
+$(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
 
-clean: 
+# Inclui dependências automaticamente
+-include $(DEPS)
+
+# Executa o programa
+run: $(TARGET)
+	./$(TARGET)
+
+# Limpeza
+clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
-.PHONY: all clean
+.PHONY: all clean run
