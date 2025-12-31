@@ -1,45 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <ctype.h>
+#include "hex.h"
 
 #define BUFFER_SIZE 4096
-#define BYTES_PER_LINE 16
-
-/**
- * Imprimi uma linha formatada.
- */
-void print_hex_line(const uint8_t *buffer, size_t length, size_t offset)
-{
-    printf("%08zx: ", offset);
-
-    /* Bytes em Hexadecimal */
-    for (size_t i = 0; i < BYTES_PER_LINE; i++)
-    {
-        if (i < length)
-        {
-            printf("%02x ", buffer[i]);
-        }
-        else
-        {
-            printf("    ");
-        }
-    }
-
-    printf(" ");
-
-    /* Representação ASCII */
-    for (size_t i = 0; i < BYTES_PER_LINE; i++)
-    {
-        if (i < length)
-        {
-            unsigned char c = buffer[i];
-            printf("%c", isprint((int)c) ? c : '.');
-        }
-    }
-
-    printf("\n");
-}
 
 int main(int argc, char *argv[])
 {
@@ -72,17 +35,10 @@ int main(int argc, char *argv[])
                 line_length = bytes_read - i;
             }
 
-            print_hex_line(buffer + i, line_length, global_offset + i);
+            hex_print_line(buffer + i, line_length, global_offset + i);
         }
 
         global_offset += bytes_read;
-    }
-
-    if (ferror(fp))
-    {
-        fprintf(stderr, "hexview: erro de leitura \n");
-        fclose(fp);
-        return EXIT_FAILURE;
     }
 
     fclose(fp);
