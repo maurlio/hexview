@@ -1,0 +1,6 @@
+# Diretórios
+build/
+hexview
+
+# IDEs 
+.vscode/
